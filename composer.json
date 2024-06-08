@@ -1,0 +1,19 @@
+{
+    "description": "Restful API with PHP and JWT, developed by Dairo Arce C",
+    "autoload": {
+        "psr-4": {
+            "PH7\\ApiSimpleMenu\\": "src/"
+        }
+    },
+    
+    "config": {
+        "platform": {
+            "php": "8.2.12"
+        }
+    },
+
+    "require": {
+        "firebase/php-jwt": "^6.10",
+        "respect/validation": "*"
+    }
+}
