@@ -14,6 +14,8 @@
 
     "require": {
         "firebase/php-jwt": "^6.10",
-        "respect/validation": "*"
+        "respect/validation": "*",
+        "ph-7/php-http-response-header": "^1.0.2",
+        "ph-7/just-http-status-codes": "^1.1"
     }
 }

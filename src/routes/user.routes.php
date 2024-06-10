@@ -32,7 +32,7 @@ enum UserAction: string
                 self::UPDATE => $user -> update($postBody),
             };
         } catch (InvalidValidationException | Exception $e) {
-
+            Http::setStatusByCode(HttpStatus::BAD_REQUEST);
             $response = [
                 'errors' => [
                     'message' => $e->getMessage(),
