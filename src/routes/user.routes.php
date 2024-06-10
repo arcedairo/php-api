@@ -4,6 +4,8 @@ namespace PH7\ApiSimpleMenu;
 
 use Exception;
 use PH7\ApiSimpleMenu\Exception\InvalidValidationException;
+use PH7\JustHttp\StatusCode;
+use PH7\PhpHttpResponseHeader\Http;
 
 require_once dirname(__DIR__) .'/endpoints/User.php'; 
 
@@ -32,7 +34,7 @@ enum UserAction: string
                 self::UPDATE => $user -> update($postBody),
             };
         } catch (InvalidValidationException | Exception $e) {
-            Http::setStatusByCode(HttpStatus::BAD_REQUEST);
+            Http::setHeadersByCode(StatusCode::BAD_REQUEST);
             $response = [
                 'errors' => [
                     'message' => $e->getMessage(),
