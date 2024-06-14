@@ -3,7 +3,7 @@
 namespace PH7\ApiSimpleMenu;
 
 use Exception;
-use PH7\ApiSimpleMenu\Exception\InvalidValidationException;
+use PH7\ApiSimpleMenu\Validation\Exception\InvalidValidationException;
 use PH7\JustHttp\StatusCode;
 use PH7\PhpHttpResponseHeader\Http;
 
@@ -22,7 +22,7 @@ enum UserAction: string
         $postBody = file_get_contents('php://input');
         $postBody = json_decode($postBody);
 
-        $userId = !empty($_GET['user_id']) ? (int)$_GET['user_id'] : 0;
+        $userId = $_GET['user_id'] ?? null;
 
         $user = new User('Dairo', 'arcedairo@unicauca.edu.co','3165500424');
         try {

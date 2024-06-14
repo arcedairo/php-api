@@ -2,12 +2,13 @@
 //Developed by Dairo Arce
 namespace PH7\ApiSimpleMenu;
 
-use PH7\ApiSimpleMenu\Exception\InvalidValidationException;
+use PH7\ApiSimpleMenu\Validation\Exception\InvalidValidationException;
+use PH7\ApiSimpleMenu\Validation\UserValidation;
 use Respect\Validation\Validator as v;
 
 class User {
 
-    public readonly int $userId;
+    public readonly ?string $userId;
 
     public function __construct(
         public readonly string $name, 
@@ -20,17 +21,13 @@ class User {
     {
         $minimumLength = 2;
         $maximumLength = 60;
-
-        $schemaValidation = v::attribute('first', v::stringType()->length($minimumLength,$maximumLength))
-            ->attribute('last', v::stringType()->length($minimumLength, $maximumLength))
-            ->attribute('email', v::email(), mandatory:false)
-            ->attribute('phone', v::phone(), mandatory:false);
-
-        if ($schemaValidation->validate($data)) {
+        
+        $userValidation = new UserValidation($data);
+        if ($userValidation->isCreationSchemaValid()) {
             return $data;
         }
 
-        throw new InvalidValidationException('Invalid Data');
+        throw new InvalidValidationException('Invalid user payload');
 
         return $this;
     }
@@ -41,18 +38,34 @@ class User {
     }
 
     public function retrieve(string $userId): self 
-    {
-        $this-> userId = $userId;
-        return $this;
+    { 
+        if(v::uuid(version:4)->validate($userId)){
+            $this->userId = $userId;
+
+            return $this; 
+        } 
+        
+        throw new InvalidValidationException("Invalid user UUID");
     }
 
-    public function update(mixed $postBody): self
-    {
-        return $this;
+    public function update(mixed $postBody): object
+    {   
+        $userValidation = new UserValidation($postBody);
+        if ($userValidation->isUpdateSchemaValid()) {
+            return $postBody;
+        }
+        
+        throw new InvalidValidationException('Invalid user payload');
     }
 
     public function remove(string $userId): bool
     {
+        if(v::uuid(version:4)->validate($userId)){
+            $this->userId = $userId;
+        } else {
+            throw new InvalidValidationException("Invalid user UUID");
+        }
+
         return true;
     }
 }
