@@ -1,4 +1,6 @@
-#Dependencie files
+.env
+
+#Dependency files
 /vendor
 composer.lock
 
