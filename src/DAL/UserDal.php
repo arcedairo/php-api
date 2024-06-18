@@ -1,5 +1,9 @@
 <?php
+namespace PH7\ApiSimpleMenu\Dal;
 
-class UserDal{
+use RedBeanPHP\SimpleModel;
+
+class UserDal extends SimpleModel
+{
     
 }
