@@ -33,7 +33,7 @@ enum UserAction: string
                 self::REMOVE => $user-> remove($userId),
                 self::UPDATE => $user -> update($postBody),
             };
-        } catch (InvalidValidationException | Exception $e) {
+        } catch (InvalidValidationException $e) {
             Http::setHeadersByCode(StatusCode::BAD_REQUEST);
             $response = [
                 'errors' => [
