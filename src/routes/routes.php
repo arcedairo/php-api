@@ -1,5 +1,7 @@
 <?php
 //Developed by Dairo Arce
+namespace PH7\ApiSimpleMenu;
+
 $resource = $_GET['resource'] ?? null;
 
 switch ($resource) {
@@ -7,5 +9,5 @@ switch ($resource) {
         return require_once 'user.routes.php';
     
     default:
-        //404
+        return require_once 'main.routes.php';
 }

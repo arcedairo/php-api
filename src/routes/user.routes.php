@@ -2,7 +2,6 @@
 //Developed by Dairo Arce
 namespace PH7\ApiSimpleMenu;
 
-use Exception;
 use PH7\ApiSimpleMenu\Validation\Exception\InvalidValidationException;
 use PH7\JustHttp\StatusCode;
 use PH7\PhpHttpResponseHeader\Http;
