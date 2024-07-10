@@ -2,11 +2,12 @@
 //Developed by Dairo Arce
 namespace PH7\ApiSimpleMenu;
 
+use PH7\ApiSimpleMenu\Service\User;
 use PH7\ApiSimpleMenu\Validation\Exception\InvalidValidationException;
 use PH7\JustHttp\StatusCode;
 use PH7\PhpHttpResponseHeader\Http;
 
-require_once dirname(__DIR__) .'/endpoints/User.php'; 
+require_once dirname(__DIR__) .'/Service/User.php'; 
 
 enum UserAction: string
 {

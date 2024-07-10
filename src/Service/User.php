@@ -1,15 +1,18 @@
 <?php
 //Developed by Dairo Arce
-namespace PH7\ApiSimpleMenu;
+namespace PH7\ApiSimpleMenu\Service;
 
+use PH7\ApiSimpleMenu\Dal\UserDal;
 use PH7\ApiSimpleMenu\Validation\Exception\InvalidValidationException;
 use PH7\ApiSimpleMenu\Validation\UserValidation;
 use Ramsey\Uuid\Uuid;
+use RedBeanPHP\RedException\SQL;
 use Respect\Validation\Validator as v;
+use PH7\ApiSimpleMenu\Entity\User as UserEntity;
 
 class User {
 
-    public readonly ?string $userId;
+    public const DATE_TIME_FORMAT = 'Y-m-d H:i:s';
 
     public function __construct(
         public readonly string $name, 
@@ -25,7 +28,19 @@ class User {
         $userValidation = new UserValidation($data);
         if ($userValidation->isCreationSchemaValid()) {
 
-            $data->userId = Uuid::uuid4();
+            $userUuid = Uuid::uuid4();
+
+            $userEntity = new UserEntity();
+            $userEntity->setUserUuid($userUuid)->setFirstName($data->first)->setLastName($data->last)->setEmail($data->email)->setPhone($data->phone)->setCreationDate(date(self::DATE_TIME_FORMAT));
+            
+            try{
+                UserDal::create($userEntity);
+            } catch(SQL $exception){
+                Http::SetHeadersByCode(StatusCode::INTERNAL_SERVER_ERROR);
+                $data = array();
+            }
+            
+
             return $data;
         }
 
@@ -42,8 +57,7 @@ class User {
     public function retrieve(string $userId): self 
     { 
         if(v::uuid(version:4)->validate($userId)){
-            $this->userId = $userId;
-
+            //TO DO
             return $this; 
         } 
         
@@ -63,7 +77,7 @@ class User {
     public function remove(string $userId): bool
     {
         if(v::uuid(version:4)->validate($userId)){
-            $this->userId = $userId;
+            //TO DO
         } else {
             throw new InvalidValidationException("Invalid user UUID");
         }
