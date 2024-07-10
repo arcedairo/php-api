@@ -7,8 +7,6 @@ use PH7\ApiSimpleMenu\Validation\Exception\InvalidValidationException;
 use PH7\JustHttp\StatusCode;
 use PH7\PhpHttpResponseHeader\Http;
 
-require_once dirname(__DIR__) .'/Service/User.php'; 
-
 enum UserAction: string
 {
     case CREATE = 'create';
@@ -24,7 +22,7 @@ enum UserAction: string
 
         $userId = $_REQUEST['id'] ?? null;
 
-        $user = new User('Dairo', 'arcedairo@unicauca.edu.co','3165500424');
+        $user = new User();
         try {
             $response = match ($this){
                 self::CREATE => $user-> create($postBody),

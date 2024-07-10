@@ -14,17 +14,8 @@ class User {
 
     public const DATE_TIME_FORMAT = 'Y-m-d H:i:s';
 
-    public function __construct(
-        public readonly string $name, 
-        public readonly string $email, 
-        public readonly string $phone)
-    {
-    }
-
     public function create(mixed $data): object
     {
-
-
         $userValidation = new UserValidation($data);
         if ($userValidation->isCreationSchemaValid()) {
 
