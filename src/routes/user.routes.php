@@ -28,7 +28,7 @@ enum UserAction: string
                 self::CREATE => $user-> create($postBody),
                 self::RETRIEVE_ALL => $user -> retrieveAll(),
                 self::RETRIEVE => $user-> retrieve($userId),
-                self::REMOVE => $user-> remove($userId),
+                self::REMOVE => $user-> remove($postBody),
                 self::UPDATE => $user -> update($postBody),
             };
         } catch (InvalidValidationException $e) {
@@ -50,6 +50,7 @@ $action = $_REQUEST['action'] ?? null;
 $userAction = match ($action){
     'create' => UserAction::CREATE,
     'retrieve' => UserAction::RETRIEVE,
+    'retrieveall' => UserAction::RETRIEVE_ALL,
     'remove' => UserAction::REMOVE,
     'update' => UserAction::UPDATE,
     default => UserAction::RETRIEVE_ALL,

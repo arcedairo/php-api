@@ -5,6 +5,8 @@ namespace PH7\ApiSimpleMenu\Service;
 use PH7\ApiSimpleMenu\Dal\UserDal;
 use PH7\ApiSimpleMenu\Validation\Exception\InvalidValidationException;
 use PH7\ApiSimpleMenu\Validation\UserValidation;
+use PH7\PhpHttpResponseHeader\Http;
+use PH7\JustHttp\StatusCode;
 use Ramsey\Uuid\Uuid;
 use RedBeanPHP\RedException\SQL;
 use Respect\Validation\Validator as v;
@@ -42,14 +44,23 @@ class User {
 
     public function retrieveAll(): array
     {
-        return [];
+        $users = UserDal::getAll();
+
+        return array_map(function(object $user): object{
+            unset($user['id']);
+            return $user;
+        }, $users);
     }
 
-    public function retrieve(string $userId): self 
+    public function retrieve(string $userUuid): array 
     { 
-        if(v::uuid(version:4)->validate($userId)){
-            //TO DO
-            return $this; 
+        if(v::uuid(version:4)->validate($userUuid)){
+            
+            if($user = UserDal::get($userUuid)){
+                unset($user['id']);
+                return $user;
+            }
+            return []; 
         } 
         
         throw new InvalidValidationException("Invalid user UUID");
@@ -65,14 +76,13 @@ class User {
         throw new InvalidValidationException('Invalid user payload');
     }
 
-    public function remove(string $userId): bool
+    public function remove(object $data): bool
     {
-        if(v::uuid(version:4)->validate($userId)){
-            //TO DO
-        } else {
-            throw new InvalidValidationException("Invalid user UUID");
-        }
-
-        return true;
+        $userValidation = new UserValidation($data);
+        if($userValidation->isRemoveSchemaValid()){
+            return UserDal::remove($data->userUuid);
+        } 
+        
+        throw new InvalidValidationException("Invalid user UUID");
     }
 }
