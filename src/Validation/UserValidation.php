@@ -15,8 +15,8 @@ class UserValidation {
     {
         $schemaValidation = v::attribute('first', v::stringType()->length(self::MINIMUM_NAME_LENGTH,self::MAXIMUM_NAME_LENGTH))
             ->attribute('last', v::stringType()->length(self::MINIMUM_NAME_LENGTH, self::MAXIMUM_NAME_LENGTH))
-            ->attribute('email', v::email(), mandatory:false)
-            ->attribute('phone', v::phone(), mandatory:false);
+            ->attribute('email', v::email())
+            ->attribute('phone', v::phone());
 
         return $schemaValidation->validate($this->data);
     }
@@ -25,8 +25,13 @@ class UserValidation {
         return v::attribute('userUuid', v::uuid())->validate($this->data);
     }
 
-    public function isUpdateSchemaValid(): bool
+    public function isUpdateSchemaValid()
     {
-        return $this->isCreationSchemaValid();
+        $schemaValidation = v::attribute('userUuid', v::uuid())
+        ->attribute('first', v::stringType()->length(self::MINIMUM_NAME_LENGTH, self::MAXIMUM_NAME_LENGTH), mandatory: false)
+        ->attribute('last', v::stringType()->length(self::MINIMUM_NAME_LENGTH, self::MAXIMUM_NAME_LENGTH), mandatory: false)
+        ->attribute('phone', v::phone(), mandatory: false);
+
+        return $schemaValidation->validate($this->data);
     }
 }

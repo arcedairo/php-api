@@ -16,7 +16,7 @@ class User {
 
     public const DATE_TIME_FORMAT = 'Y-m-d H:i:s';
 
-    public function create(mixed $data): object
+    public function create(mixed $data): array|object
     {
         $userValidation = new UserValidation($data);
         if ($userValidation->isCreationSchemaValid()) {
@@ -52,7 +52,7 @@ class User {
         }, $users);
     }
 
-    public function retrieve(string $userUuid): array 
+    public function retrieve(string $userUuid): array
     { 
         if(v::uuid(version:4)->validate($userUuid)){
             
@@ -66,11 +66,30 @@ class User {
         throw new InvalidValidationException("Invalid user UUID");
     }
 
-    public function update(mixed $postBody): object
+    public function update(mixed $postBody): array|object
     {   
         $userValidation = new UserValidation($postBody);
         if ($userValidation->isUpdateSchemaValid()) {
-            return $postBody;
+            $userUuid = $postBody->userUuid;
+            $userEntity = new UserEntity();
+            if(!empty($postBody->first)){
+                $userEntity->setFirstName($postBody->first);
+            }
+            if(!empty($postBody->last)){
+                $userEntity->setLastName($postBody->last);
+            }
+            if(!empty($postBody->phone)){
+                $userEntity->setPhone($postBody->phone);
+            }
+
+            $result = UserDal::update($userUuid, $userEntity);
+
+            if($result){
+                return $postBody;
+            }
+
+            return [];
+            
         }
         
         throw new InvalidValidationException('Invalid user payload');
