@@ -3,17 +3,14 @@ namespace PH7\ApiSimpleMenu\Dal;
 
 use PH7\ApiSimpleMenu\Entity\User as UserEntity;
 use RedBeanPHP\R;
+use RedBeanPHP\RedException\SQL;
 
 final class UserDal
 {
 
     public const TABLE_NAME = 'users';
 
-    /**
-     * @throws \RedBeanPHP\RedException\SQL
-     */
-
-    public static function create(UserEntity $userEntity): int|string
+    public static function create(UserEntity $userEntity): int|string|false
     {
        $userBean = R::dispense(self::TABLE_NAME);
        $userBean->user_uuid = $userEntity->getUserUuid();
@@ -23,14 +20,18 @@ final class UserDal
        $userBean->phone = $userEntity->getPhone();
        $userBean->created_date = $userEntity->getCreationDate();
 
-       $id = R::store($userBean);
+       try{
+            $id = R::store($userBean);
+        } catch(SQL $e){
+            return false;
+        } finally {
+            R::close();
+        }
 
-       R::close();
-       
-       return $id;
+        return $id;
     }
 
-    public static function update(string $userUuid, UserEntity $userEntity): int|string
+    public static function update(string $userUuid, UserEntity $userEntity): int|string|false
     {
         $userBean = R::findOne(self::TABLE_NAME, 'user_uuid = :userUuid', ['userUuid' => $userUuid]);
 
@@ -52,10 +53,16 @@ final class UserDal
                 $userBean->phone = $phone;
             }
 
-            return R::store($userBean);
+            try{
+                return R::store($userBean);
+            } catch (SQL $e){
+                return false;
+            } finally {
+                R::close();
+            }
         }
 
-        return 0;
+        return false;
 
     }
 

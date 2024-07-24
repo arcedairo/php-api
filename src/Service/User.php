@@ -26,9 +26,7 @@ class User {
             $userEntity = new UserEntity();
             $userEntity->setUserUuid($userUuid)->setFirstName($data->first)->setLastName($data->last)->setEmail($data->email)->setPhone($data->phone)->setCreationDate(date(self::DATE_TIME_FORMAT));
             
-            try{
-                UserDal::create($userEntity);
-            } catch(SQL $exception){
+            if(UserDal::create($userEntity) === false){
                 Http::SetHeadersByCode(StatusCode::INTERNAL_SERVER_ERROR);
                 $data = array();
             }
@@ -82,14 +80,10 @@ class User {
                 $userEntity->setPhone($postBody->phone);
             }
 
-            $result = UserDal::update($userUuid, $userEntity);
-
-            if($result){
-                return $postBody;
+            if(UserDal::update($userUuid, $userEntity) === false){
+                return [];
             }
-
-            return [];
-            
+            return $postBody;
         }
         
         throw new InvalidValidationException('Invalid user payload');
