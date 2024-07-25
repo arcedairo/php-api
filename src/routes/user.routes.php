@@ -47,13 +47,10 @@ enum UserAction: string
 
 $action = $_REQUEST['action'] ?? null;
 
-$userAction = match ($action){
-    'create' => UserAction::CREATE,
-    'retrieve' => UserAction::RETRIEVE,
-    'retrieveall' => UserAction::RETRIEVE_ALL,
-    'remove' => UserAction::REMOVE,
-    'update' => UserAction::UPDATE,
-    default => UserAction::RETRIEVE_ALL,
-};
+$userAction = UserAction::tryFrom($action);
 
-echo $userAction-> getResponse();
+if($userAction){
+    echo $userAction-> getResponse();
+} else {
+    require_once 'main.routes.php';
+}
