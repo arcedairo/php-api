@@ -31,7 +31,7 @@ class User {
                 $data = array();
             }
             
-
+            Http::setHeadersByCode(StatusCode::CREATED);
             return $data;
         }
 
@@ -81,18 +81,22 @@ class User {
             }
 
             if(UserDal::update($userUuid, $userEntity) === false){
+                Http::setHeadersByCode(StatusCode::INTERNAL_SERVER_ERROR);
                 return [];
             }
+
+            Http::setHeadersByCode(StatusCode::OK);
             return $postBody;
         }
         
         throw new InvalidValidationException('Invalid user payload');
     }
 
-    public function remove(object $data): bool
+    public function remove(mixed $data): bool
     {
         $userValidation = new UserValidation($data);
         if($userValidation->isRemoveSchemaValid()){
+            //Http::setHeadersByCode(StatusCode::NO_CONTENT);
             return UserDal::remove($data->userUuid);
         } 
         

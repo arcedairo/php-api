@@ -10,7 +10,7 @@ use PH7\PhpHttpResponseHeader\Http;
 enum UserAction: string
 {
     case CREATE = 'create';
-    case RETRIEVE_ALL = 'retrieveAll';
+    case RETRIEVE_ALL = 'retrieveall';
     case RETRIEVE = 'retrieve';
     case REMOVE = 'remove';
     case UPDATE = 'update';
