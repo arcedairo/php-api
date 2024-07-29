@@ -20,7 +20,7 @@ enum UserAction: string
         $postBody = file_get_contents('php://input');
         $postBody = json_decode($postBody);
 
-        $userId = $_REQUEST['id'] ?? null;
+        $userId = $_REQUEST['id'] ?? '';
 
         $user = new User();
         try {

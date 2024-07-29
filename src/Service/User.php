@@ -21,7 +21,7 @@ class User {
         $userValidation = new UserValidation($data);
         if ($userValidation->isCreationSchemaValid()) {
 
-            $userUuid = Uuid::uuid4();
+            $userUuid = Uuid::uuid4()->toString();
 
             $userEntity = new UserEntity();
             $userEntity->setUserUuid($userUuid)->setFirstName($data->first)->setLastName($data->last)->setEmail($data->email)->setPhone($data->phone)->setCreationDate(date(self::DATE_TIME_FORMAT));
