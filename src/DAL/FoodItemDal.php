@@ -23,7 +23,7 @@ class FoodItemDal
         return R::findAll(self::TABLE_NAME);
     }
 
-    public static function create(): void
+    public static function createDefaultItem(): int|string
     {
         $itemBean = R::dispense(self::TABLE_NAME);
         $itemBean->item_uuid = Uuid::uuid4()->toString();
@@ -31,6 +31,6 @@ class FoodItemDal
         $itemBean->price = 19.55;
         $itemBean->available = true;
 
-        R::store($itemBean);
+        return R::store($itemBean);
     }
 }
