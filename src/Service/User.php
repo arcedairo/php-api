@@ -11,20 +11,13 @@ use Ramsey\Uuid\Uuid;
 use RedBeanPHP\RedException\SQL;
 use Respect\Validation\Validator as v;
 use PH7\ApiSimpleMenu\Entity\User as UserEntity;
-use PH7\ApiSimpleMenu\Route\Exception\NotFoundException;
-use PH7\ApiSimpleMenu\Route\Http;
 
 class User {
 
     public const DATE_TIME_FORMAT = 'Y-m-d H:i:s';
 
     public function create(mixed $data): array|object
-    {
-
-        if (!Http::doesHttpMethodMatch(Http::POST_METHOD)){
-            throw new NotFoundException('Http method is incorrect. Request not found');
-        }   
-
+    {  
         $userValidation = new UserValidation($data);
         if ($userValidation->isCreationSchemaValid()) {
 
@@ -73,10 +66,6 @@ class User {
 
     public function update(mixed $postBody): array|object
     {   
-        if (!Http::doesHttpMethodMatch(Http::POST_METHOD)){
-            throw new NotFoundException('Http method is incorrect. Request not found');
-        }
-        
         $userValidation = new UserValidation($postBody);
         if ($userValidation->isUpdateSchemaValid()) {
             $userUuid = $postBody->userUuid;
@@ -105,10 +94,6 @@ class User {
 
     public function remove(mixed $data): bool
     {
-        if (!Http::doesHttpMethodMatch(Http::DELETE_METHOD)){
-            throw new NotFoundException('Http method is incorrect. Request not found');
-        }
-
         $userValidation = new UserValidation($data);
         if($userValidation->isRemoveSchemaValid()){
             //Http::setHeadersByCode(StatusCode::NO_CONTENT);
