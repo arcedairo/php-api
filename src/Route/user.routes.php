@@ -1,6 +1,6 @@
 <?php
 //Developed by Dairo Arce
-namespace PH7\ApiSimpleMenu;
+namespace PH7\ApiSimpleMenu\Route;
 
 use PH7\ApiSimpleMenu\Service\User;
 use PH7\ApiSimpleMenu\Validation\Exception\InvalidValidationException;
@@ -14,6 +14,10 @@ enum UserAction: string
     case RETRIEVE = 'retrieve';
     case REMOVE = 'remove';
     case UPDATE = 'update';
+
+    /**
+     * @throws Exception\NotFoundException
+     */
 
     public function getResponse(): string 
     {  

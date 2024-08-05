@@ -1,6 +1,6 @@
 <?php
 
-namespace PH7\ApiSimpleMenu;
+namespace PH7\ApiSimpleMenu\Route;
 
 use PH7\JustHttp\StatusCode;
 use PH7\PhpHttpResponseHeader\Http;
