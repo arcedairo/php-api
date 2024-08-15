@@ -25,7 +25,7 @@ class User {
             $userUuid = Uuid::uuid4()->toString();
 
             $userEntity = new UserEntity();
-            $userEntity->setUserUuid($userUuid)->setFirstName($data->first)->setLastName($data->last)->setEmail($data->email)->setPhone($data->phone)->setPassword(password_hash($data->password, PASSWORD_ARGON2I))->setCreationDate(date(self::DATE_TIME_FORMAT));
+            $userEntity->setUserUuid($userUuid)->setFirstName($data->first)->setLastName($data->last)->setEmail($data->email)->setPhone($data->phone)->setPassword(hashPassword($data->password))->setCreationDate(date(self::DATE_TIME_FORMAT));
             
             $email = $userEntity->getEmail();
             if(UserDal::doesEmailExist($email)){
