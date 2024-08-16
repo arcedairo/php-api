@@ -2,9 +2,9 @@
 
 namespace PH7\ApiSimpleMenu\Route\Exception;
 
-use Exception;
+use RuntimeException;
 
-class NotFoundException extends Exception
+class NotFoundException extends RuntimeException
 {
     
 }

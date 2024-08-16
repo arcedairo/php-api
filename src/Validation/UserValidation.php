@@ -36,4 +36,12 @@ class UserValidation {
 
         return $schemaValidation->validate($this->data);
     }
+
+    public function isLoginSchemaValid():bool{
+        $schemaValidation = 
+            v::attribute('email', v::stringType())
+            ->attribute('password', v::stringType());
+
+        return $schemaValidation->validate($this->data);
+    }
 }

@@ -2,9 +2,11 @@
 //Developed by Dairo Arce
 namespace PH7\ApiSimpleMenu\Service;
 
+use Firebase\JWT\JWT;
 use PH7\ApiSimpleMenu\Dal\UserDal;
 use PH7\ApiSimpleMenu\service\Exception\EmailExistsException;
 use PH7\ApiSimpleMenu\Validation\Exception\InvalidValidationException;
+use PH7\ApiSimpleMenu\Service\Exception\CredentialsInvalidException;
 use PH7\ApiSimpleMenu\Validation\UserValidation;
 use PH7\PhpHttpResponseHeader\Http as HttpResponse;
 use PH7\JustHttp\StatusCode;
@@ -16,6 +18,43 @@ use PH7\ApiSimpleMenu\Entity\User as UserEntity;
 class User {
 
     public const DATE_TIME_FORMAT = 'Y-m-d H:i:s';
+
+    public function login(mixed $data){
+        
+        $userValidation = new UserValidation($data);
+        if($userValidation->isLoginSchemaValid()){
+            if(UserDal::doesEmailExist($data->email)) {
+                
+                $user = UserDal::getByEmail($data->email);
+                
+                if($user && password_verify($data->password, $user['password'])) {
+                    $userName = "{$user['first_name']} {$user['last_name']}";
+                    $currentTime = time();
+                    $jwtToken = JWT::encode(
+                        [
+                            'iss' => $_ENV['APP_URL'],
+                            'iat' => $currentTime,
+                            'exp' => $currentTime + (60*60),
+                            'data' => [
+                                'email' => $data->email,
+                                'name' => $userName
+                            ]
+                        ],
+
+                        $_ENV['JWT_KEY'], 
+                        $_ENV['JWT_ALGO_ENCRYPTION']
+                    );
+
+                    return [
+                        'token' => $jwtToken,
+                        'message' => sprintf('%s successfully logged in!', $userName)
+                    ];
+                }
+            }
+            throw new CredentialsInvalidException('Invalid credentials');
+        }
+        throw new InvalidValidationException('Invalid payload');
+    }
 
     public function create(mixed $data): array|object
     {  
@@ -60,7 +99,7 @@ class User {
     { 
         if(v::uuid(version:4)->validate($userUuid)){
             
-            if($user = UserDal::get($userUuid)){
+            if($user = UserDal::getById($userUuid)){
                 unset($user['id']);
                 return $user;
             }
