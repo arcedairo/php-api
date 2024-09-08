@@ -2,6 +2,7 @@
 namespace PH7\ApiSimpleMenu\Dal;
 
 use PH7\ApiSimpleMenu\Entity\User as UserEntity;
+use PH7\ApiSimpleMenu\Service\User;
 use RedBeanPHP\R;
 use RedBeanPHP\RedException\SQL;
 
@@ -67,23 +68,40 @@ final class UserDal
 
     }
 
-    public static function getById(string $userUuid): ?array
+    public static function getById(string $userUuid): UserEntity
     {
         $bindings = ['userUuid' => $userUuid];
         $userBean = R::findOne(self::TABLE_NAME, 'user_uuid = :userUuid', $bindings);
-        return $userBean?->export();
+        return (new UserEntity())->unserialize($userBean?->export());
     }
 
-    public static function getByEmail(string $email): ?array 
+    public static function getByEmail(string $email): UserEntity
     {
         $bindings = ['email' => $email];
         $userBean = R::findOne(self::TABLE_NAME, 'email = :email', $bindings);
-
-        return $userBean?->export();
+        return (new UserEntity())->unserialize($userBean?->export());
     }
 
-    public static function getAll(): array {
-        return R::findAll(self::TABLE_NAME);
+    public static function getAll(): ?array {
+        $usersBean = R::findAll(self::TABLE_NAME);
+
+        $areAnyUsers = $usersBean && count($usersBean);
+
+        if(!$areAnyUsers){
+            return [];
+        }
+
+        return array_map(function(object $userBean): array{
+            $userEntity = (new UserEntity())->unserialize($userBean?->export());
+            return [
+                'userUuid' => $userEntity->getUserUuid(),
+                'first' => $userEntity->getFirstName(),
+                'last' => $userEntity->getLastName(),
+                'email' => $userEntity->getEmail(),
+                'phone' => $userEntity->getPhone(),
+                'creationDate' => $userEntity->getCreationDate()
+            ];
+        }, $usersBean);
     }
 
     public static function remove(string $userUuid): int {
