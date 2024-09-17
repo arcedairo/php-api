@@ -2,7 +2,7 @@
 
 namespace PH7\ApiSimpleMenu\Entity;
 
-class User
+class User implements Entitable
 {
     private int $sequentialId;
 

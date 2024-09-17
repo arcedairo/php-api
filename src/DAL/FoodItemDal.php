@@ -2,6 +2,7 @@
 
 namespace PH7\ApiSimpleMenu\Dal;
 
+use PH7\ApiSimpleMenu\Entity\Item as ItemEntity;
 use Ramsey\Uuid\Uuid;
 use RedBeanPHP\R;
 
@@ -9,27 +10,47 @@ class FoodItemDal
 {
     public const TABLE_NAME = 'fooditems';
 
-    public static function get(string $itemUuid): ?array {
+    public static function get(string $itemUuid): ItemEntity
+    {
 
         $bindings = ['itemUuid' => $itemUuid];
 
         $itemBean = R::findOne(self::TABLE_NAME, 'item_uuid = :itemUuid', $bindings);
 
-        return $itemBean?->export();
+        return (new ItemEntity())->unserialize($itemBean?->export());
     }
 
     public static function getAll(): array
     {
-        return R::findAll(self::TABLE_NAME);
+        $itemsBean = R::findAll(self::TABLE_NAME);
+
+        $areAnyItems = $itemsBean && count($itemsBean);
+
+        if(!$areAnyItems){
+            return [];
+        }
+
+        return array_map(
+            function (object $itemBean): array{
+                $itemEntity = (new ItemEntity())->unserialize($itemBean?->export());
+
+                return [
+                    'food_Uuid' => $itemEntity->getItemUuid(),
+                    'name' => $itemEntity->getName(),
+                    'price' => $itemEntity->getPrice(),
+                    'available' => $itemEntity->getAvailable()
+                ];
+            }, $itemsBean);
     }
 
-    public static function createDefaultItem(): int|string
+    public static function createDefaultItem(ItemEntity $itemEntity): int|string
     {
         $itemBean = R::dispense(self::TABLE_NAME);
-        $itemBean->item_uuid = Uuid::uuid4()->toString();
-        $itemBean->name = 'Burrito chips';
-        $itemBean->price = 19.55;
-        $itemBean->available = true;
+        
+        $itemBean->itemUuid = $itemEntity->getItemUuid();
+        $itemBean->name = $itemEntity->getName();
+        $itemBean->price = $itemEntity->getPrice();
+        $itemBean->available = $itemEntity->getAvailable();
 
         return R::store($itemBean);
     }

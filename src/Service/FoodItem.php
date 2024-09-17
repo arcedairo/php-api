@@ -2,6 +2,8 @@
 
 namespace PH7\ApiSimpleMenu\Service;
 use PH7\ApiSimpleMenu\Dal\FoodItemDal;
+use PH7\ApiSimpleMenu\Entity\Item as ItemEntity;
+use Ramsey\Uuid\Uuid;
 use PH7\ApiSimpleMenu\Validation\Exception\InvalidValidationException;
 use Respect\Validation\Validator as v;
 
@@ -11,8 +13,14 @@ class FoodItem
         if(v::uuid(version:4)->validate($itemUuid)){
             
             if($item = FoodItemDal::get($itemUuid)){
-                unset($item['id']);
-                return $item;
+               if($item->getItemUuid()){
+                    return [
+                        'itemUuid' => $item->getItemUuid(),
+                        'name' => $item->getName(),
+                        'price' => $item->getPrice(),
+                        'available' => $item->getAvailable() 
+                    ];
+               }
             } 
 
             return []; 
@@ -25,14 +33,20 @@ class FoodItem
         $items = FoodItemDal::getAll();
 
         if(count($items) === 0){
-            FoodItemDal::createDefaultItem();
+
+            $itemUuid = Uuid::uuid4()->toString();
+            $itemEntity = new ItemEntity();
+            $itemEntity->setItemUuid($itemUuid);
+            $itemEntity->setName('Burrito Cheese Chips');
+            $itemEntity->setPrice(19.99);
+            $itemEntity->setAvailable(true);
+
+            FoodItemDal::createDefaultItem($itemEntity);
 
             $items = FoodItemDal::getAll();
         }
-        return array_map(function(object $item): object{
-            unset($item['id']);
-            return $item;
-        }, $items);
+
+        return $items;
     }
 
 }
