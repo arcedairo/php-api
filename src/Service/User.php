@@ -19,6 +19,11 @@ class User {
 
     public const DATE_TIME_FORMAT = 'Y-m-d H:i:s';
 
+    public function __construct(protected string $jwtKey)
+    {
+    }
+
+
     public function login(mixed $data): array{
         
         $userValidation = new UserValidation($data);
@@ -41,7 +46,7 @@ class User {
                             ]
                         ],
 
-                        $_ENV['JWT_KEY'], 
+                        $this->jwtKey, 
                         $_ENV['JWT_ALGO_ENCRYPTION']
                     );
 

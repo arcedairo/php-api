@@ -5,6 +5,7 @@ namespace PH7\ApiSimpleMenu\Route;
 use PH7\ApiSimpleMenu\Route\Exception\NotFoundException;
 use PH7\ApiSimpleMenu\Service\User;
 use PH7\ApiSimpleMenu\service\Exception\EmailExistsException;
+use PH7\ApiSimpleMenu\Service\SecretKey;
 use PH7\ApiSimpleMenu\Validation\Exception\InvalidValidationException;
 use PH7\JustHttp\StatusCode;
 use PH7\PhpHttpResponseHeader\Http as HttpResponse;
@@ -29,7 +30,10 @@ enum UserAction: string
 
         $userId = $_REQUEST['id'] ?? '';
 
-        $user = new User();
+        $jwtToken = SecretKey::getJwtSecretKey();
+
+        $user = new User($jwtToken);
+        
         try {
             $expectHttpMethod = match($this){
                 self::LOGIN => Http::POST_METHOD,

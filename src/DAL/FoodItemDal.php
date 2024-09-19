@@ -6,7 +6,7 @@ use PH7\ApiSimpleMenu\Entity\Item as ItemEntity;
 use Ramsey\Uuid\Uuid;
 use RedBeanPHP\R;
 
-class FoodItemDal 
+final class FoodItemDal 
 {
     public const TABLE_NAME = 'fooditems';
 

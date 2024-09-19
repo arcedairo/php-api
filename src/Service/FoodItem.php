@@ -36,10 +36,11 @@ class FoodItem
 
             $itemUuid = Uuid::uuid4()->toString();
             $itemEntity = new ItemEntity();
-            $itemEntity->setItemUuid($itemUuid);
-            $itemEntity->setName('Burrito Cheese Chips');
-            $itemEntity->setPrice(19.99);
-            $itemEntity->setAvailable(true);
+            $itemEntity->
+            setItemUuid($itemUuid)->
+            setName('Burrito Cheese Chips')->
+            setPrice(19.99)->
+            setAvailable(true);
 
             FoodItemDal::createDefaultItem($itemEntity);
 
