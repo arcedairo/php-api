@@ -80,12 +80,15 @@ class User {
                 throw new EmailExistsException(sprintf('email address %s already exists', $email));
             }
             
-            if(UserDal::create($userEntity) === false){
-                HttpResponse::SetHeadersByCode(StatusCode::INTERNAL_SERVER_ERROR);
+            if(!$userUuid = UserDal::create($userEntity)){
+                HttpResponse::SetHeadersByCode(StatusCode::BAD_REQUEST);
                 $data = array();
             }
             
             HttpResponse::setHeadersByCode(StatusCode::CREATED);
+
+            $data->userUuid = $userUuid;
+            
             return $data;
         }
 
@@ -139,7 +142,7 @@ class User {
             }
 
             if(UserDal::update($userUuid, $userEntity) === false){
-                HttpResponse::setHeadersByCode(StatusCode::INTERNAL_SERVER_ERROR);
+                HttpResponse::setHeadersByCode(StatusCode::NOT_FOUND);
                 return [];
             }
 
