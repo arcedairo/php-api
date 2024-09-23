@@ -4,6 +4,9 @@ namespace PH7\ApiSimpleMenu;
 
 use PH7\ApiSimpleMenu\Route\Exception\NotFoundException;
 use PH7\ApiSimpleMenu\service\Exception\CredentialsInvalidException;
+use PH7\ApiSimpleMenu\Validation\Exception\InvalidValidationException;
+use PH7\JustHttp\StatusCode;
+use PH7\PhpHttpResponseHeader\Http as HttpResponse;
 
 $resource = $_REQUEST['resource'] ?? null;
 
@@ -15,7 +18,17 @@ return match ($resource) {
 };
 } catch(CredentialsInvalidException $e){
     response([
-        'message' => $e->getMessage()
+        'errors' => [
+            'message' => $e->getMessage()
+        ]
+    ]);
+} catch (InvalidValidationException $e) {
+    HttpResponse::setHeadersByCode(StatusCode::BAD_REQUEST);
+    response([
+        'errors' => [
+            'message' => $e->getMessage(),
+            'code' => $e->getCode()
+        ]
     ]);
 } catch(NotFoundException $e){
     return require_once 'not-found.routes.php';

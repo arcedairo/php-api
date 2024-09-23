@@ -20,21 +20,12 @@ enum FoodItemAction: string
         $itemId = $_REQUEST['id'] ?? '';
 
         $item = new FoodItem();
-        try {
+
             $response = match ($this){
                 self::RETRIEVE_ALL => $item -> retrieveAll(),
                 self::RETRIEVE => $item-> retrieve($itemId),
             };
-        } catch (InvalidValidationException $e) {
-            Http::setHeadersByCode(StatusCode::BAD_REQUEST);
-            $response = [
-                'errors' => [
-                    'message' => $e->getMessage(),
-                    'code' => $e->getCode()
-                ]
-            ];
-        }
-
+       
         return json_encode($response);
     }
 }

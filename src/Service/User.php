@@ -2,8 +2,10 @@
 //Developed by Dairo Arce
 namespace PH7\ApiSimpleMenu\Service;
 
+use Exception;
 use Firebase\JWT\JWT;
 use PH7\ApiSimpleMenu\Dal\UserDal;
+use PH7\ApiSimpleMenu\Service\Exception\CannotLoginUserException;
 use PH7\ApiSimpleMenu\service\Exception\EmailExistsException;
 use PH7\ApiSimpleMenu\Validation\Exception\InvalidValidationException;
 use PH7\ApiSimpleMenu\Service\Exception\CredentialsInvalidException;
@@ -52,7 +54,11 @@ class User {
                         $_ENV['JWT_ALGO_ENCRYPTION']
                     );
 
-                    UserDal::setToken($jwtToken, $user->getUserUuid());
+                    try{
+                        UserDal::setToken($jwtToken, $user->getUserUuid());
+                    } catch (Exception $e){
+                        throw new CannotLoginUserException('Cannot set token to user');
+                    }
 
                     return [
                         'token' => $jwtToken,
